@@ -32,7 +32,7 @@ namespace SimpleCalculator
 
         private string EvaluateStatement(string statementToEvaluate)
         {
-                object commandResult = CsEval.Eval(this, statementToEvaluate);
+                object commandResult = CsEval.Eval(new object(), statementToEvaluate);
                 return commandResult.ToString();
         }
     }
