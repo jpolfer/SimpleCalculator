@@ -1,10 +1,10 @@
-﻿using Microsoft.CodeDom.Providers.DotNetCompilerPlatform;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
+using CSE;
 
 namespace SimpleCalculator
 {
@@ -12,8 +12,12 @@ namespace SimpleCalculator
     {
         protected void Page_Load(object sender, EventArgs e)
         {
-            // Evaluate statement
-
+            if(Page.IsPostBack)
+            {
+                // Evaluate statement
+                object commandResult = CsEval.Eval(this, txtThingToCalculate.Text);
+                lblResult.Text = commandResult.ToString();
+            }
         }
     }
 }
