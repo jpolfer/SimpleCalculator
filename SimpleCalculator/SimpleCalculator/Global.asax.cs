@@ -19,22 +19,7 @@ namespace SimpleCalculator
             RouteConfig.RegisterRoutes(RouteTable.Routes);
             BundleConfig.RegisterBundles(BundleTable.Bundles);
 
-            if(!File.Exists(DatabaseHelper.dbfilename))
-            {
-                // Create db
-                SQLiteConnection.CreateFile(DatabaseHelper.dbfilename);
-
-                // Create history table
-                using (SQLiteConnection m_dbConnection = new SQLiteConnection("Data Source=" + DatabaseHelper.dbfilename + ";Version=3;"))
-                {
-                    m_dbConnection.Open();
-                    string createHistoryTableSql = "CREATE TABLE history (timestamp TEXT, command TEXT);";
-                    using (SQLiteCommand createHistoryTable = new SQLiteCommand(createHistoryTableSql, m_dbConnection))
-                    {
-                        createHistoryTable.ExecuteNonQuery();
-                    }
-                }
-            }
+            DatabaseHelper.SetupDatabase();
         }
     }
 }
