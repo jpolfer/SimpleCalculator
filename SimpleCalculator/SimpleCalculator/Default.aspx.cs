@@ -14,33 +14,12 @@ namespace SimpleCalculator
         private string dbfilename = "C:\\tmp\\simplecalculator.sqlite";
         protected void Page_Load(object sender, EventArgs e)
         {
-            if(Page.IsPostBack)
+            if(!Page.IsPostBack)
             {
-                if(!string.IsNullOrWhiteSpace(txtThingToCalculate.Text))
-                {
-                    try
-                    {
-                        // Evaluate statement
-                        string result = EvaluateStatement(txtThingToCalculate.Text);
-
-                        // Store statement results
-                        if(!StoreEvaluationToHistoryTable(txtThingToCalculate.Text, result))
-                        {
-                            throw new Exception();
-                        }
-
-                        // Display result
-                        lblResult.Text = result;
-                    }
-                    catch (Exception ex)
-                    {
-                        lblResult.Text = "An Error has occurred during evaluation or history update.  Please try again!";
-                    }
-                }
+                // Display all history from the history table
+                // Only do this if not postback - we'll load history from the evaluate click event otherwise
+                LoadHistoryList();
             }
-
-            // Display all history from the history table
-            LoadHistoryList();
         }
 
         private string EvaluateStatement(string statementToEvaluate)
@@ -99,6 +78,33 @@ namespace SimpleCalculator
             rptHistory.DataSource = historyEntries;
             rptHistory.DataBind();
         }
-        
+
+        protected void btnRunCommand_Click(object sender, EventArgs e)
+        {
+                if(!string.IsNullOrWhiteSpace(txtThingToCalculate.Text))
+                {
+                    try
+                    {
+                        // Evaluate statement
+                        string result = EvaluateStatement(txtThingToCalculate.Text);
+
+                        // Store statement results
+                        if(!StoreEvaluationToHistoryTable(txtThingToCalculate.Text, result))
+                        {
+                            throw new Exception();
+                        }
+
+                        // Display result
+                        lblResult.Text = result;
+                    }
+                    catch (Exception ex)
+                    {
+                        lblResult.Text = "An Error has occurred during evaluation or history update.  Please try again!";
+                    }
+                }
+
+            // Reload history list
+            LoadHistoryList();
+        }
     }
 }
