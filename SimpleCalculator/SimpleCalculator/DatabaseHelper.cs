@@ -58,6 +58,7 @@ namespace SimpleCalculator
 
             return historyEntries;
         }
+
         public static void ClearHistoryTable()
         {
             using (SQLiteConnection m_dbConnection = new SQLiteConnection("Data Source=" + DatabaseHelper.dbfilename + ";Version=3;"))
@@ -67,6 +68,23 @@ namespace SimpleCalculator
                 using (SQLiteCommand sqlCommand = new SQLiteCommand(sql, m_dbConnection))
                 {
                     sqlCommand.ExecuteNonQuery();
+                }
+            }
+        }
+
+        public static bool StoreEvaluationToHistoryTable(string command, string result)
+        {
+            using (SQLiteConnection m_dbConnection = new SQLiteConnection("Data Source=" + DatabaseHelper.dbfilename + ";Version=3;"))
+            {
+                m_dbConnection.Open();
+                string timestamp = DateTime.Now.ToString();
+                string evaluationStatement = command + " = " + result;
+                string sql = "insert into history (timestamp, command) values ('" + timestamp + "', '" + evaluationStatement + "')";
+                using (SQLiteCommand sqlCommand = new SQLiteCommand(sql, m_dbConnection))
+                {
+                    int sqlCommandResult = sqlCommand.ExecuteNonQuery();
+
+                    return sqlCommandResult == 1;
                 }
             }
         }

@@ -11,6 +11,14 @@ namespace SimpleCalculator
 {
     public partial class _Default : Page
     {
+        private void LoadHistoryList()
+        {
+            List<HistoryEntry> historyEntries = DatabaseHelper.GetHistoryEntriesFromDb();
+
+            rptHistory.DataSource = historyEntries;
+            rptHistory.DataBind();
+        }
+
         protected void Page_Load(object sender, EventArgs e)
         {
             if(!Page.IsPostBack)
@@ -27,31 +35,6 @@ namespace SimpleCalculator
                 return commandResult.ToString();
         }
 
-        private bool StoreEvaluationToHistoryTable(string command, string result)
-        {
-            using (SQLiteConnection m_dbConnection = new SQLiteConnection("Data Source=" + DatabaseHelper.dbfilename + ";Version=3;"))
-            {
-                m_dbConnection.Open();
-                string timestamp = DateTime.Now.ToString();
-                string evaluationStatement = command + " = " + result;
-                string sql = "insert into history (timestamp, command) values ('" + timestamp + "', '" + evaluationStatement + "')";
-                using (SQLiteCommand sqlCommand = new SQLiteCommand(sql, m_dbConnection))
-                {
-                    int sqlCommandResult = sqlCommand.ExecuteNonQuery();
-
-                    return sqlCommandResult == 1;
-                }
-            }
-        }
-
-        private void LoadHistoryList()
-        {
-            List<HistoryEntry> historyEntries = DatabaseHelper.GetHistoryEntriesFromDb();
-
-            rptHistory.DataSource = historyEntries;
-            rptHistory.DataBind();
-        }
-
         protected void btnRunCommand_Click(object sender, EventArgs e)
         {
                 if(!string.IsNullOrWhiteSpace(txtThingToCalculate.Text))
@@ -62,7 +45,7 @@ namespace SimpleCalculator
                         string result = EvaluateStatement(txtThingToCalculate.Text);
 
                         // Store statement results
-                        if(!StoreEvaluationToHistoryTable(txtThingToCalculate.Text, result))
+                        if(!DatabaseHelper.StoreEvaluationToHistoryTable(txtThingToCalculate.Text, result))
                         {
                             throw new Exception();
                         }
