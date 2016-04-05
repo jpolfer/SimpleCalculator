@@ -108,6 +108,8 @@ namespace SimpleCalculator
 
         protected void btnClearHistory_Click(object sender, EventArgs e)
         {
+            txtThingToCalculate.Text = "";
+            lblResult.Text = "";
             ClearHistoryTable();
             LoadHistoryList();
         }
