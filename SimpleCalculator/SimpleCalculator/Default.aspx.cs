@@ -5,29 +5,42 @@ using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 using CSE;
+using System.Data.SQLite;
 
 namespace SimpleCalculator
 {
     public partial class _Default : Page
     {
+        private string dbfilename = "C:\\tmp\\simplecalculator.sqlite";
         protected void Page_Load(object sender, EventArgs e)
         {
             if(Page.IsPostBack)
             {
                 if(!string.IsNullOrWhiteSpace(txtThingToCalculate.Text))
                 {
-                    // Evaluate statement
                     try
                     {
+                        // Evaluate statement
                         string result = EvaluateStatement(txtThingToCalculate.Text);
+
+                        // Store statement results
+                        if(!StoreEvaluationToHistoryTable(txtThingToCalculate.Text, result))
+                        {
+                            throw new Exception();
+                        }
+
+                        // Display result
                         lblResult.Text = result;
                     }
                     catch (Exception ex)
                     {
-                        lblResult.Text = "An Error has occurred during evaluation.  Please try again!";
+                        lblResult.Text = "An Error has occurred during evaluation or history update.  Please try again!";
                     }
                 }
             }
+
+            // Display all history from the history table
+            LoadHistoryList();
         }
 
         private string EvaluateStatement(string statementToEvaluate)
@@ -35,5 +48,57 @@ namespace SimpleCalculator
                 object commandResult = CsEval.Eval(new object(), statementToEvaluate);
                 return commandResult.ToString();
         }
+
+        private bool StoreEvaluationToHistoryTable(string command, string result)
+        {
+            using (SQLiteConnection m_dbConnection = new SQLiteConnection("Data Source=" + dbfilename + ";Version=3;"))
+            {
+                m_dbConnection.Open();
+                string timestamp = DateTime.Now.ToString();
+                string evaluationStatement = command + " = " + result;
+                string sql = "insert into history (timestamp, command) values ('" + timestamp + "', '" + evaluationStatement + "')";
+                using (SQLiteCommand sqlCommand = new SQLiteCommand(sql, m_dbConnection))
+                {
+                    int sqlCommandResult = sqlCommand.ExecuteNonQuery();
+
+                    return sqlCommandResult == 1;
+                }
+            }
+        }
+
+        private class HistoryEntry
+        {
+            public string Timestamp { get; set; }
+            public string Command { get; set; }
+        }
+
+        private void LoadHistoryList()
+        {
+            List<HistoryEntry> historyEntries = new List<HistoryEntry>();
+            using (SQLiteConnection m_dbConnection = new SQLiteConnection("Data Source=" + dbfilename + ";Version=3;"))
+            {
+                string sql = "select timestamp, command from history";
+                using (SQLiteCommand sqlCommand = new SQLiteCommand(sql, m_dbConnection))
+                {
+                    m_dbConnection.Open();
+                    using (SQLiteDataReader reader = sqlCommand.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            HistoryEntry newEntry = new HistoryEntry()
+                            {
+                                Timestamp = reader["timestamp"].ToString(),
+                                Command = reader["command"].ToString()
+                            };
+                            historyEntries.Add(newEntry);
+                        }
+                    }
+                }
+            }
+
+            rptHistory.DataSource = historyEntries;
+            rptHistory.DataBind();
+        }
+        
     }
 }
