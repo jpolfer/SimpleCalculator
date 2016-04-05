@@ -29,5 +29,6 @@
                 </table>
             </FooterTemplate>
         </asp:Repeater>
+        <asp:Button ID="btnClearHistory" runat="server" Text="Clear History" CssClass="col-xd-4" OnClick="btnClearHistory_Click" />
     </div>
 </asp:Content>

@@ -45,14 +45,15 @@ namespace SimpleCalculator
             }
         }
 
+
         private class HistoryEntry
         {
             public string Timestamp { get; set; }
             public string Command { get; set; }
         }
-
         private void LoadHistoryList()
         {
+
             List<HistoryEntry> historyEntries = new List<HistoryEntry>();
             using (SQLiteConnection m_dbConnection = new SQLiteConnection("Data Source=" + dbfilename + ";Version=3;"))
             {
@@ -105,6 +106,25 @@ namespace SimpleCalculator
 
             // Reload history list
             LoadHistoryList();
+        }
+
+        protected void btnClearHistory_Click(object sender, EventArgs e)
+        {
+            ClearHistoryTable();
+            LoadHistoryList();
+        }
+
+        private void ClearHistoryTable()
+        {
+            using (SQLiteConnection m_dbConnection = new SQLiteConnection("Data Source=" + dbfilename + ";Version=3;"))
+            {
+                m_dbConnection.Open();
+                string sql = "delete from history";
+                using (SQLiteCommand sqlCommand = new SQLiteCommand(sql, m_dbConnection))
+                {
+                    sqlCommand.ExecuteNonQuery();
+                }
+            }
         }
     }
 }
