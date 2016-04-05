@@ -11,7 +11,6 @@ namespace SimpleCalculator
 {
     public partial class _Default : Page
     {
-        private string dbfilename = "C:\\tmp\\simplecalculator.sqlite";
         protected void Page_Load(object sender, EventArgs e)
         {
             if(!Page.IsPostBack)
@@ -30,7 +29,7 @@ namespace SimpleCalculator
 
         private bool StoreEvaluationToHistoryTable(string command, string result)
         {
-            using (SQLiteConnection m_dbConnection = new SQLiteConnection("Data Source=" + dbfilename + ";Version=3;"))
+            using (SQLiteConnection m_dbConnection = new SQLiteConnection("Data Source=" + DatabaseHelper.dbfilename + ";Version=3;"))
             {
                 m_dbConnection.Open();
                 string timestamp = DateTime.Now.ToString();
@@ -45,17 +44,10 @@ namespace SimpleCalculator
             }
         }
 
-
-        private class HistoryEntry
+        private List<HistoryEntry> GetHistoryEntriesFromDb()
         {
-            public string Timestamp { get; set; }
-            public string Command { get; set; }
-        }
-        private void LoadHistoryList()
-        {
-
             List<HistoryEntry> historyEntries = new List<HistoryEntry>();
-            using (SQLiteConnection m_dbConnection = new SQLiteConnection("Data Source=" + dbfilename + ";Version=3;"))
+            using (SQLiteConnection m_dbConnection = new SQLiteConnection("Data Source=" + DatabaseHelper.dbfilename + ";Version=3;"))
             {
                 string sql = "select timestamp, command from history";
                 using (SQLiteCommand sqlCommand = new SQLiteCommand(sql, m_dbConnection))
@@ -75,6 +67,12 @@ namespace SimpleCalculator
                     }
                 }
             }
+
+            return historyEntries;
+        }
+        private void LoadHistoryList()
+        {
+            List<HistoryEntry> historyEntries = GetHistoryEntriesFromDb();
 
             rptHistory.DataSource = historyEntries;
             rptHistory.DataBind();
@@ -116,7 +114,7 @@ namespace SimpleCalculator
 
         private void ClearHistoryTable()
         {
-            using (SQLiteConnection m_dbConnection = new SQLiteConnection("Data Source=" + dbfilename + ";Version=3;"))
+            using (SQLiteConnection m_dbConnection = new SQLiteConnection("Data Source=" + DatabaseHelper.dbfilename + ";Version=3;"))
             {
                 m_dbConnection.Open();
                 string sql = "delete from history";
