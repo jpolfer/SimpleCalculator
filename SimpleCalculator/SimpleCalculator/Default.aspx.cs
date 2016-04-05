@@ -44,35 +44,9 @@ namespace SimpleCalculator
             }
         }
 
-        private List<HistoryEntry> GetHistoryEntriesFromDb()
-        {
-            List<HistoryEntry> historyEntries = new List<HistoryEntry>();
-            using (SQLiteConnection m_dbConnection = new SQLiteConnection("Data Source=" + DatabaseHelper.dbfilename + ";Version=3;"))
-            {
-                string sql = "select timestamp, command from history";
-                using (SQLiteCommand sqlCommand = new SQLiteCommand(sql, m_dbConnection))
-                {
-                    m_dbConnection.Open();
-                    using (SQLiteDataReader reader = sqlCommand.ExecuteReader())
-                    {
-                        while (reader.Read())
-                        {
-                            HistoryEntry newEntry = new HistoryEntry()
-                            {
-                                Timestamp = reader["timestamp"].ToString(),
-                                Command = reader["command"].ToString()
-                            };
-                            historyEntries.Add(newEntry);
-                        }
-                    }
-                }
-            }
-
-            return historyEntries;
-        }
         private void LoadHistoryList()
         {
-            List<HistoryEntry> historyEntries = GetHistoryEntriesFromDb();
+            List<HistoryEntry> historyEntries = DatabaseHelper.GetHistoryEntriesFromDb();
 
             rptHistory.DataSource = historyEntries;
             rptHistory.DataBind();
@@ -110,21 +84,9 @@ namespace SimpleCalculator
         {
             txtThingToCalculate.Text = "";
             lblResult.Text = "";
-            ClearHistoryTable();
+            DatabaseHelper.ClearHistoryTable();
             LoadHistoryList();
         }
 
-        private void ClearHistoryTable()
-        {
-            using (SQLiteConnection m_dbConnection = new SQLiteConnection("Data Source=" + DatabaseHelper.dbfilename + ";Version=3;"))
-            {
-                m_dbConnection.Open();
-                string sql = "delete from history";
-                using (SQLiteCommand sqlCommand = new SQLiteCommand(sql, m_dbConnection))
-                {
-                    sqlCommand.ExecuteNonQuery();
-                }
-            }
-        }
     }
 }
