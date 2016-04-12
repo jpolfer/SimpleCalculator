@@ -5,7 +5,7 @@
     <h2>Welcome to Simple Calculator!</h2>
     <div id="calculator_command">
         <asp:TextBox runat="server" ID="txtThingToCalculate" CssClass="col-xd-6"></asp:TextBox>
-        <asp:Button runat="server" ID="btnRunCommand" Text="=" CssClass="col-xd-2" OnClick="btnRunCommand_Click" />
+        <asp:Button runat="server" ID="btnRunCommand" Text="=" CssClass="col-xd-2 execute-button" OnClick="btnRunCommand_Click" />
         <asp:Label runat="server" ID="lblResult" CssClass="col-xd-4" />
     </div>
     <hr />
@@ -31,4 +31,5 @@
         </asp:Repeater>
         <asp:Button ID="btnClearHistory" runat="server" Text="Clear History" CssClass="col-xd-4" OnClick="btnClearHistory_Click" />
     </div>
+    <script type="text/javascript" src="Scripts/default.js"></script>
 </asp:Content>
