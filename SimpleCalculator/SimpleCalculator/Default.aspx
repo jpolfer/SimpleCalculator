@@ -1,5 +1,9 @@
 ﻿<%@ Page Title="Home Page" Language="C#" MasterPageFile="~/Site.Master" AutoEventWireup="true" CodeBehind="Default.aspx.cs" Inherits="SimpleCalculator._Default" %>
 
+<asp:Content ID="HeaderStyleContent" ContentPlaceHolderID="HeaderStyles" runat="server">
+    <link rel="stylesheet" href="Content/index.css" />
+</asp:Content>
+
 <asp:Content ID="BodyContent" ContentPlaceHolderID="MainContent" runat="server">
 
     <h2>Welcome to Simple Calculator!</h2>
@@ -15,8 +19,8 @@
             <HeaderTemplate>
                 <table border="1">
                     <tr>
-                            <th class="col-xd-4">Timestamp</th>
-                            <th class="col-xd-4">Command</th>
+                            <th class="col-xd-4 history-header">Timestamp</th>
+                            <th class="col-xd-4 history-header">Command</th>
                     </tr>
             </HeaderTemplate>
             <ItemTemplate>
