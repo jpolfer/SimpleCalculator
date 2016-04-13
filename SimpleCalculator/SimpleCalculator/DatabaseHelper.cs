@@ -30,6 +30,7 @@ namespace SimpleCalculator
 
         public static void ClearHistoryTable()
         {
+           
             using (var db = new SimpleCalculatorContext())
             {
                 foreach(HistoryEntry entry in db.HistoryEntries)
