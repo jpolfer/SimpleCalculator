@@ -1,5 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Configuration;
+using System.Data;
+using System.Data.SqlClient;
 using System.Data.SQLite;
 using System.IO;
 using System.Linq;
@@ -30,14 +33,16 @@ namespace SimpleCalculator
 
         public static void ClearHistoryTable()
         {
-           
-            using (var db = new SimpleCalculatorContext())
+            // Call stored proc
+            using (var conn = new SqlConnection(ConfigurationManager.ConnectionStrings["HistoryConnection"].ConnectionString))
+            using (var command = new SqlCommand("master.dbo.spDeleteAllHistoryEntries", conn)
             {
-                foreach(HistoryEntry entry in db.HistoryEntries)
-                {
-                    db.HistoryEntries.Remove(entry);
-                }
-                db.SaveChanges();
+                CommandType = CommandType.StoredProcedure
+            })
+            {
+                conn.Open();
+                command.ExecuteNonQuery();
+                conn.Close();
             }
         }
 
