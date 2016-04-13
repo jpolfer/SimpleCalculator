@@ -8,6 +8,8 @@ namespace SimpleCalculator
 {
     public class SimpleCalculatorContext : DbContext
     {
+        public SimpleCalculatorContext() : base("HistoryConnection") { }
+
         public DbSet<HistoryEntry> HistoryEntries { get; set; }
     }
 }
