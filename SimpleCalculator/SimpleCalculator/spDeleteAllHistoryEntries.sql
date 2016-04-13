@@ -26,7 +26,7 @@ BEGIN
 	SET NOCOUNT ON;
 
     -- Insert statements for procedure here
-	DECLARE @timestamp VARCHAR(50) -- timestamp
+	DECLARE @timestamp NVARCHAR(128) -- timestamp
 	DECLARE db_cursor CURSOR FOR  
 			SELECT [Timestamp] 
 			FROM MASTER.dbo.HistoryEntries   
