@@ -18,7 +18,7 @@ GO
 -- Create date: 4/13/2016
 -- Description:	Deletes all history records
 -- =============================================
-CREATE PROCEDURE DeleteAllHistoryEntries 
+CREATE PROCEDURE spDeleteAllHistoryEntries 
 AS
 BEGIN
 	-- SET NOCOUNT ON added to prevent extra result sets from
